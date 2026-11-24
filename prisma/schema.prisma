@@ -1,46 +1,59 @@
-generator client { provider = "prisma-client-js" }
-datasource db { provider = "sqlite"
-  url = env("DATABASE_URL") 
+generator client {
+  provider = "prisma-client-js"
 }
-model Site { id String @id @default(cuid())
-  domain String @unique
-  isCompetitor Boolean @default(false)
-  createdAt DateTime @default(now())
-  audits Audit[]
-  keywords Keyword[]
-  alerts Alert[] 
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
 }
-model Audit { id String @id @default(cuid())
-  siteId String
-  site Site @relation(fields: [siteId], references: [id])
+
+model Site {
+  id           String    @id @default(cuid())
+  domain       String    @unique
+  isCompetitor Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  audits       Audit[]
+  keywords     Keyword[]
+  alerts       Alert[]
+}
+
+model Audit {
+  id          String   @id @default(cuid())
+  siteId      String
+  site        Site     @relation(fields: [siteId], references: [id])
   healthScore Int
-  perfMobile Int
+  perfMobile  Int
   perfDesktop Int
-  lcp Float
-  cls Float
-  inp Float
-  da Int
-  pa Int
-  spam Int
-  backlinks Int
-  refDomains Int
-  createdAt DateTime @default(now()) 
+  lcp         Float
+  cls         Float
+  inp         Float
+  da          Int
+  pa          Int
+  spam        Int
+  backlinks   Int
+  refDomains  Int
+  createdAt   DateTime @default(now())
 }
-model Keyword { id String @id @default(cuid())
-  siteId String
-  site Site @relation(fields: [siteId], references: [id])
-  term String
-  position Int
-  volume Int
+
+model Keyword {
+  id         String   @id @default(cuid())
+  siteId     String
+  site       Site     @relation(fields: [siteId], references: [id])
+  term       String
+  position   Int
+  volume     Int
   difficulty Int
-  intent String
-  checkedAt DateTime @default(now()) }
-model Alert { id String @id @default(cuid())
-  siteId String
-  site Site @relation(fields: [siteId], references: [id])
-  metric String
-  zScore Float
-  severity String
-  message String
-  createdAt DateTime @default(now()) 
+  intent     String
+  checkedAt  DateTime @default(now())
+}
+
+model Alert {
+  id        String   @id @default(cuid())
+  siteId    String
+  site      Site     @relation(fields: [siteId], references: [id])
+  metric    String
+  zScore    Float
+  severity  String
+  message   String
+  createdAt DateTime @default(now())
 }
