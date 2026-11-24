@@ -1,13 +1,15 @@
 generator client { provider = "prisma-client-js" }
 datasource db { provider = "sqlite"
-  url = env("DATABASE_URL") }
+  url = env("DATABASE_URL") 
+}
 model Site { id String @id @default(cuid())
   domain String @unique
   isCompetitor Boolean @default(false)
   createdAt DateTime @default(now())
   audits Audit[]
   keywords Keyword[]
-  alerts Alert[] }
+  alerts Alert[] 
+}
 model Audit { id String @id @default(cuid())
   siteId String
   site Site @relation(fields: [siteId], references: [id])
@@ -22,7 +24,8 @@ model Audit { id String @id @default(cuid())
   spam Int
   backlinks Int
   refDomains Int
-  createdAt DateTime @default(now()) }
+  createdAt DateTime @default(now()) 
+}
 model Keyword { id String @id @default(cuid())
   siteId String
   site Site @relation(fields: [siteId], references: [id])
@@ -39,4 +42,5 @@ model Alert { id String @id @default(cuid())
   zScore Float
   severity String
   message String
-  createdAt DateTime @default(now()) }
+  createdAt DateTime @default(now()) 
+}
