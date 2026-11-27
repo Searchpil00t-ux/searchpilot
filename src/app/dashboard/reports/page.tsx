@@ -4,12 +4,12 @@ import Brachiosaurus from '@/components/Brachiosaurus';
 import { Empty } from '@/components/ui';
 const verdict = (n: number) => n >= 80 ? 'Strong' : n >= 60 ? 'Fair' : 'Needs attention';
 export default function Reports() {
-  const { data } = useAudit(); if (!data) return <Empty />;
-  const me = data[0], o = me.onpage, rivals = data.slice(1);
+  const { data, compare } = useAudit(); if (!data) return <Empty />;
+  const me = data[0], o = me.onpage, all = compare && compare[0]?.domain === me.domain ? compare : data, rivals = all.slice(1);
   const fixes = (o?.issues ?? []).slice(0, 5);
   function csv() {
     const h = ['domain', 'DA', 'PA', 'spam', 'backlinks', 'refDomains', 'ageYears', 'health', 'mobile', 'desktop', 'LCP', 'CLS', 'INP'];
-    const rows = data!.map((d: any) => [d.domain, d.moz.da, d.moz.pa, d.moz.spam, d.moz.backlinks, d.moz.refDomains, d.age.ageYears, d.healthScore, d.mobile.performance, d.desktop.performance, d.mobile.lcp, d.mobile.cls, d.mobile.inp].join(','));
+    const rows = all.map((d: any) => [d.domain, d.moz.da, d.moz.pa, d.moz.spam, d.moz.backlinks, d.moz.refDomains, d.age.ageYears, d.healthScore, d.mobile.performance, d.desktop.performance, d.mobile.lcp, d.mobile.cls, d.mobile.inp].join(','));
     const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([[h.join(','), ...rows].join('\n')], { type: 'text/csv' })); a.download = 'searchpilot-report.csv'; a.click();
   }
   return (<div className="space-y-6"><h1 className="text-2xl font-extrabold print:hidden">Reports and export</h1>
@@ -21,7 +21,7 @@ export default function Reports() {
       <h2 className="mt-6 text-lg font-bold">Top things to fix first</h2>
       {fixes.length ? <ol className="mt-1 list-decimal space-y-1 pl-5 text-sm">{fixes.map((x: any, i: number) => <li key={i}><b>{x.severity}:</b> {x.message}</li>)}</ol> : <p className="mt-1 text-sm">No issues were found on your home page.</p>}
       <h2 className="mt-6 text-lg font-bold">Side-by-side</h2>
-      <table className="mt-1 w-full text-sm"><thead><tr className="text-left text-slate"><th className="py-2">Site</th><th>Authority</th><th>Health</th><th>Mobile</th><th>Desktop</th></tr></thead><tbody>{data.map((d: any) => <tr key={d.domain} className="border-t border-slate/20"><td className="py-2 font-mono">{d.domain}</td><td>{d.moz.da}</td><td>{d.healthScore}</td><td>{d.mobile.performance}</td><td>{d.desktop.performance}</td></tr>)}</tbody></table>
+      <table className="mt-1 w-full text-sm"><thead><tr className="text-left text-slate"><th className="py-2">Site</th><th>Authority</th><th>Health</th><th>Mobile</th><th>Desktop</th></tr></thead><tbody>{all.map((d: any) => <tr key={d.domain} className="border-t border-slate/20"><td className="py-2 font-mono">{d.domain}</td><td>{d.moz.da}</td><td>{d.healthScore}</td><td>{d.mobile.performance}</td><td>{d.desktop.performance}</td></tr>)}</tbody></table>
       <p className="mt-6 text-xs text-slate">Speed and domain age may be live or demo depending on your setup. Authority values are demo until a Moz key is connected.</p>
     </article></div>);
 }
